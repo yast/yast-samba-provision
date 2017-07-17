@@ -45,14 +45,16 @@ module Yast
       aliases = {
         "operation" => lambda { OperationDialog() },
         "options" => lambda { OptionsDialog() },
-        "dns" => lambda { Dns() },
-        "password" => lambda { Password() }
+        "additional" => lambda { AdditionalOptionsDialog() },
+        "password" => lambda { PasswordDialog() }
       }
 
       sequence = {
         "ws_start" => "operation",
-        "operation" => { :abort => :abort, :next => "options" },
-        "options"   => { :abort => :abort, :next => :finish }
+        "operation"  => { :abort => :abort, :next => "options" },
+        "options"    => { :abort => :abort, :next => "additional" },
+        "additional" => { :abort => :abort, :next => "password" },
+        "password"   => { :abort => :abort, :next => :next },
       }
 
       ret = Sequencer.Run(aliases, sequence)
@@ -65,13 +67,15 @@ module Yast
     # @return sequence result
     def SambaProvisionSequence
       aliases = {
-        "main" => lambda { MainSequence() },
+        "read"  => [ lambda { ReadDialog() }, true ],
+        "main"  => lambda { MainSequence() },
         "write" => [ lambda { WriteDialog() }, true ]
       }
 
       sequence = {
-        "ws_start" => "main",
-        "main"     => { :abort => :abort, :next => :next },
+        "ws_start" => "read",
+        "read"     => { :abort => :abort, :next => "main" },
+        "main"     => { :abort => :abort, :next => "write" },
         "write"    => { :abort => :abort, :next => :next }
       }
 

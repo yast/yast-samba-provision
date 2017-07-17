@@ -77,16 +77,24 @@ module Yast
       case operation = UI.QueryWidget(Id(:operation), :Value)
       when :op_new_forest
         SambaProvision.operation = "new_forest"
-        SambaProvision.new_forest_name = UI.QueryWidget(Id(:new_forest_name), :Value)
+        SambaConfig.GlobalSetStr("realm",
+          Convert.to_string(
+            UI.QueryWidget(Id(:new_forest_name), :Value)))
       when :op_new_domain
         SambaProvision.operation = "new_domain"
-        SambaProvision.new_domain_name = UI.QueryWidget(Id(:new_domain_name), :Value)
-        SambaProvision.parent_domain_name = UI.QueryWidget(Id(:parent_domain_name), :Value)
+        SambaConfig.GlobalSetStr("realm",
+          Convert.to_string(
+            UI.QueryWidget(Id(:new_domain_name), :Value)))
+        SambaProvision.parent_domain_name =
+          Convert.to_string(
+            UI.QueryWidget(Id(:parent_domain_name), :Value))
       when :op_new_dc
         SambaProvision.operation = "new_dc"
-        SambaProvision.existing_domain_name = UI.QueryWidget(Id(:domain_name), :Value)
+	SambaConfig.GlobalSetStr("realm",
+          Convert.to_string(
+            UI.QueryWidget(Id(:domain_name), :Value)))
       else
-        SambaProvision.StoreOperation("")
+        SambaProvision.operation = ""
         log.warning("Unhandled operation")
       end
 
@@ -100,7 +108,7 @@ module Yast
           _("Specify the domain information for this operation"),
           VBox(
             VSpacing(1),
-            Left(InputField(Id(:new_forest_name), _("Root domain name")))
+            Left(InputField(Id(:new_forest_name), Opt(:hstretch), _("Root domain name")))
           )
         )
       )
@@ -115,8 +123,8 @@ module Yast
           _("Specify the domain information for this operation"),
           VBox(
             VSpacing(1),
-            Left(InputField(Id(:parent_domain_name), _("Parent domain name"))),
-            Left(InputField(Id(:new_domain_name), _("New domain name")))
+            Left(InputField(Id(:parent_domain_name), Opt(:hstretch), _("Parent domain name"))),
+            Left(InputField(Id(:new_domain_name),    Opt(:hstretch), _("New domain name")))
           )
         )
       )
@@ -131,7 +139,7 @@ module Yast
           _("Specify the domain information for this operation"),
           VBox(
             VSpacing(1),
-            Left(InputField(Id(:domain_name), _("Domain")))
+            Left(InputField(Id(:domain_name), Opt(:hstretch), _("Domain")))
           )
         )
       )

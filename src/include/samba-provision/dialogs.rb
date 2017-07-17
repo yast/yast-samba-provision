@@ -7,11 +7,15 @@ module Yast
       Yast.import "UI"
       Yast.import "Label"
       Yast.import "CWM"
+      Yast.import "Stage"
+      Yast.import "Samba"
 
       textdomain "samba-provision"
 
       Yast.include include_target, "samba-provision/operation-widget.rb"
       Yast.include include_target, "samba-provision/options-widget.rb"
+      Yast.include include_target, "samba-provision/additional-options-widget.rb"
+      Yast.include include_target, "samba-provision/password-widget.rb"
 
     end
 
@@ -76,6 +80,78 @@ module Yast
         contents,
         help,
         Label.BackButton,
+        Label.NextButton
+      )
+
+      Wizard.SetAbortButton(:abort, Label.CancelButton)
+
+      ret = CWM.Run(
+        w,
+        { :abort => fun_ref(method(:confirmAbort), "boolean ()") }
+      )
+
+    end
+
+    # Domain and computer netbios names dialog
+    # @return `abort if aborted and `next otherwise
+    def AdditionalOptionsDialog
+
+      caption = _("Additional options")
+
+      widget_descr = {
+        "additional" => CreateSambaProvisionAdditionalOptionsWidget()
+      }
+
+      w = CWM.CreateWidgets(
+        ["additional"],
+        widget_descr
+      )
+
+      help = CWM.MergeHelps(w)
+      contents = VBox("additional", VStretch())
+      contents = CWM.PrepareDialog(contents, w)
+
+      Wizard.SetContentsButtons(
+        caption,
+        contents,
+        help,
+        Label.BackButton,
+        Label.NextButton
+      )
+
+      Wizard.SetAbortButton(:abort, Label.CancelButton)
+
+      ret = CWM.Run(
+        w,
+        { :abort => fun_ref(method(:confirmAbort), "boolean ()") }
+      )
+
+    end
+
+    # Password dialog
+    # @return `abort if aborted and `next otherwise
+    def PasswordDialog
+
+      caption = _("Domain administrator password")
+
+      widget_descr = {
+        "password" => CreateSambaProvisionPasswordWidget()
+      }
+
+      w = CWM.CreateWidgets(
+        ["password"],
+        widget_descr
+      )
+
+      help = CWM.MergeHelps(w)
+      contents = VBox("password", VStretch())
+      contents = CWM.PrepareDialog(contents, w)
+
+      Wizard.SetContentsButtons(
+        caption,
+        contents,
+        help,
+        Label.BackButton,
         Label.OKButton
       )
 
@@ -85,6 +161,32 @@ module Yast
         w,
         { :abort => fun_ref(method(:confirmAbort), "boolean ()") }
       )
+
+    end
+
+    def ReadDialog
+
+      Wizard.RestoreHelp(Ops.get_string(@HELPS, "read", ""))
+
+      pkgs = [ "samba-kdc", "samba-dsdb-modules", "krb5-server" ]
+      if !PackageSystem.CheckAndInstallPackagesInteractive(pkgs)
+        Builtins.y2warning("packages not installed")
+        return :abort
+      end
+
+      ret = Samba.Read
+      ret ? :next : :abort
+
+    end
+
+    def WriteDialog
+
+      Wizard.HideAbortButton
+      Wizard.HideBackButton
+      Wizard.HideNextButton
+      Wizard.RestoreHelp(Ops.get_string(@HELPS, "write", ""))
+      ret = SambaProvision.Write
+      ret ? :next : :abort
 
     end
 
