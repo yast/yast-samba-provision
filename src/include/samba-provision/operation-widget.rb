@@ -40,18 +40,18 @@ module Yast
         "custom_widget" => operation_widget,
         "init"          => fun_ref(method(:SambaProvisionOperationWidgetInit), "void (string)"),
         "handle"        => fun_ref(method(:SambaProvisionOperationWidgetHandle), "symbol (string, map)"),
-        "store"         => fun_ref(method(:SambaProvisionOperationWidgetStore), "void (string, map)")
+        "store"         => fun_ref(method(:SambaProvisionOperationWidgetStore), "void (string, map)"),
+        "validate_type" => :function,
+        "validate_function" => fun_ref(method(:SambaProvisionOperationWidgetValidate), "boolean (string, map)")
       }
 
     end
 
     def SambaProvisionOperationWidgetInit(key)
 
-      UI.ChangeWidget(
-        Id(:op_new_forest),
-        :Value,
-        true
-      )
+      UI.ChangeWidget(Id(:op_new_forest), :Value, true)
+      UI.ChangeWidget(Id(:op_new_domain), :Enabled, false)
+      UI.ChangeWidget(Id(:op_new_dc), :Enabled, false)
       SambaProvisionOperationOptionsNewForest()
 
     end
@@ -79,24 +79,45 @@ module Yast
         SambaProvision.operation = "new_forest"
         SambaConfig.GlobalSetStr("realm",
           Convert.to_string(
-            UI.QueryWidget(Id(:new_forest_name), :Value)))
+            UI.QueryWidget(Id(:new_forest_name), :Value)).upcase)
       when :op_new_domain
         SambaProvision.operation = "new_domain"
         SambaConfig.GlobalSetStr("realm",
           Convert.to_string(
-            UI.QueryWidget(Id(:new_domain_name), :Value)))
+            UI.QueryWidget(Id(:new_domain_name), :Value)).upcase)
         SambaProvision.parent_domain_name =
           Convert.to_string(
             UI.QueryWidget(Id(:parent_domain_name), :Value))
       when :op_new_dc
         SambaProvision.operation = "new_dc"
-	SambaConfig.GlobalSetStr("realm",
+        SambaConfig.GlobalSetStr("realm",
           Convert.to_string(
-            UI.QueryWidget(Id(:domain_name), :Value)))
+            UI.QueryWidget(Id(:domain_name), :Value)).upcase)
       else
         SambaProvision.operation = ""
         log.warning("Unhandled operation")
       end
+
+      SambaConfig.GlobalSetStr("server role", "domain controller")
+
+    end
+
+    def SambaProvisionOperationWidgetValidate(key, event_descr)
+
+      case operation = UI.QueryWidget(Id(:operation), :Value)
+      when :op_new_forest
+        realm = Convert.to_string(
+          UI.QueryWidget(Id(:new_forest_name), :Value))
+        # TODO: Validate domain
+        # TODO: Query DNS to check specified realm is not defined
+        if realm.length == 0
+          return false
+        end
+      # TODO: Validate new domain operation
+      # TODO: Validate new dc operation
+      end
+
+      true
 
     end
 
