@@ -13,6 +13,7 @@ module Yast
       Yast.import "Progress"
       Yast.import "SambaConfig"
       Yast.import "Kerberos"
+      Yast.import "DNS"
 
       @operation = ""
       @parent_domain_name = ""
@@ -36,15 +37,24 @@ module Yast
       stages = [
         _("Write the settings"),
         _("Provision"),
-        _("Write kerberos settings"),
+        _("Write kerberos settings")
       ]
       steps = [
         _("Writting the settings..."),
         _("Provisioning..."),
-        _("Writting kerberos settings..."),
+        _("Writting kerberos settings...")
       ]
 
-            Progress.New(caption, " ", no_stages, stages, steps, "")
+      if @dns
+        no_stages = Ops.add(no_stages, 2)
+        stages = Builtins.add(stages, _("Write DNS settings"))
+        stages = Builtins.add(stages, _("Update network configuration"))
+
+        steps = Builtins.add(steps, _("Writting DNS settings..."))
+        steps = Builtins.add(steps, _("Updating network configuration..."))
+      end
+
+      Progress.New(caption, " ", no_stages, stages, steps, "")
 
       # Write settings
       Progress.NextStage
@@ -72,6 +82,18 @@ module Yast
       if !write_kerberos
         Report.Error(Message.CannotWriteSettingsTo("/etc/krb5.conf"))
         return false
+      end
+
+      # Write DNS
+      if @dns
+        Progress.NextStage
+        if !write_dns
+          Report.Error(Message.CannotWriteSettingsTo("/etc/sysconfig/network/config"))
+          return false
+        end
+
+        Progress.NextStage
+        SCR.Execute(path(".target.bash"), "/sbin/netconfig update")
       end
 
       # Final stage
@@ -153,6 +175,30 @@ module Yast
       Kerberos.dns_used = true
       Kerberos.modified = true
       Kerberos.Write()
+
+      true
+
+    end
+
+    def write_dns
+
+      resolvlist = Builtins.splitstring(
+        Convert.to_string(
+          SCR.Read(
+            path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SERVERS")
+          )
+        ),
+        " "
+      )
+
+      if resolvlist.index("127.0.0.1") == nil
+        resolvlist = Builtins.prepend(resolvlist, "127.0.0.1")
+      end
+
+      SCR.Write(
+        path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SERVERS"),
+        Builtins.mergestring(resolvlist, " ")
+      )
 
       true
 

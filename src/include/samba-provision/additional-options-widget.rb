@@ -67,6 +67,7 @@ module Yast
             VBox(
               VSpacing(1),
               Left(ComboBox(Id(:dns_backend), _("Backend"), dns_backends)),
+              Left(InputField(Id(:dns_forwarder), _("Forwarder")))
             )
           )
         )
@@ -91,8 +92,24 @@ module Yast
         Convert.to_string(
           UI.QueryWidget(Id(:netbios_host_name), :Value)))
 
-      SambaProvision.dns_backend = Convert.to_string(
-        UI.QueryWidget(Id(:dns_backend), :Value))
+      if SambaProvision.dns
+
+        SambaProvision.dns_backend = Convert.to_string(
+          UI.QueryWidget(Id(:dns_backend), :Value))
+
+        if SambaProvision.dns_backend == "SAMBA_INTERNAL"
+          forwarder = Convert.to_string(
+              UI.QueryWidget(Id(:dns_forwarder), :Value))
+
+          if forwarder.length > 0
+            SambaConfig.GlobalSetStr("dns forwarder", forwarder)
+          else
+            SambaConfig.GlobalSetStr("dns forwarder", nil)
+          end
+
+        end
+
+      end
 
     end
 
