@@ -126,6 +126,12 @@ module Yast
         { :abort => fun_ref(method(:confirmAbort), "boolean ()") }
       )
 
+      if ret == :next and SambaProvision.operation == "new_forest"
+        ret = :adminpass
+      end
+
+      ret
+
     end
 
     # Password dialog

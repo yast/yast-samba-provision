@@ -53,7 +53,7 @@ module Yast
         "ws_start" => "operation",
         "operation"  => { :abort => :abort, :next => "options" },
         "options"    => { :abort => :abort, :next => "additional" },
-        "additional" => { :abort => :abort, :next => "password" },
+        "additional" => { :abort => :abort, :next => :next, :adminpass => "password" },
         "password"   => { :abort => :abort, :next => :next },
       }
 

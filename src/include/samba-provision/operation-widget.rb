@@ -6,6 +6,7 @@ module Yast
 
       Yast.import "UI"
       Yast.import "SambaProvision"
+      Yast.import "Ldap"
 
       textdomain "samba-provision"
 
@@ -32,6 +33,10 @@ module Yast
           Id(:operation_options),
           VBox(VStretch())
         ),
+        ReplacePoint(
+          Id(:operation_credentials),
+          VBox(VStretch())
+        ),
         VStretch()
       )
 
@@ -51,7 +56,7 @@ module Yast
 
       UI.ChangeWidget(Id(:op_new_forest), :Value, true)
       UI.ChangeWidget(Id(:op_new_domain), :Enabled, false)
-      UI.ChangeWidget(Id(:op_new_dc), :Enabled, false)
+      UI.ChangeWidget(Id(:op_new_dc), :Enabled, true)
       SambaProvisionOperationOptionsNewForest()
 
     end
@@ -62,8 +67,10 @@ module Yast
 
       if id == :op_new_dc
         SambaProvisionOperationOptionsNewDC()
+        SambaProvisionOperationOptionsCredentials()
       elsif id == :op_new_domain
         SambaProvisionOperationOptionsNewDomain()
+        SambaProvisionOperationOptionsCredentials()
       elsif id == :op_new_forest
         SambaProvisionOperationOptionsNewForest()
       end
@@ -90,6 +97,12 @@ module Yast
             UI.QueryWidget(Id(:parent_domain_name), :Value))
       when :op_new_dc
         SambaProvision.operation = "new_dc"
+        SambaProvision.credentials_username =
+          Convert.to_string(
+            UI.QueryWidget(Id(:credentials_username), :Value))
+        SambaProvision.credentials_password =
+          Convert.to_string(
+            UI.QueryWidget(Id(:credentials_password), :Value))
         SambaConfig.GlobalSetStr("realm",
           Convert.to_string(
             UI.QueryWidget(Id(:domain_name), :Value)).upcase)
@@ -114,7 +127,24 @@ module Yast
           return false
         end
       # TODO: Validate new domain operation
-      # TODO: Validate new dc operation
+      when :op_new_dc
+        domain = Convert.to_string(
+          UI.QueryWidget(Id(:domain_name), :Value))
+        # TODO: Validate domain
+        # TODO: Query DNS to check specified realm is defined
+        if domain.length == 0
+          return false
+        end
+        username = Convert.to_string(
+          UI.QueryWidget(Id(:credentials_username), :Value))
+        password = Convert.to_string(
+          UI.QueryWidget(Id(:credentials_password), :Value))
+        if username.length == 0 or password.length == 0
+          return false
+        end
+        # TODO Query domain (net ads info) and get LDAP server
+        # Check credentials binding to LDAP
+        # TODO Check domain and forest functional level
       end
 
       true
@@ -161,6 +191,22 @@ module Yast
           VBox(
             VSpacing(1),
             Left(InputField(Id(:domain_name), Opt(:hstretch), _("Domain")))
+          )
+        )
+      )
+
+    end
+
+    def SambaProvisionOperationOptionsCredentials
+
+      UI.ReplaceWidget(
+        Id(:operation_credentials),
+        Frame(
+          _("Specify the credentials for this operation"),
+          VBox(
+            VSpacing(1),
+            Left(InputField(Id(:credentials_username), Opt(:hstretch), _("Username"))),
+            Left(Password(Id(:credentials_password), Opt(:hstretch), _("Password")))
           )
         )
       )

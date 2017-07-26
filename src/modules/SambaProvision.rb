@@ -27,6 +27,9 @@ module Yast
 
       @admin_password = ""
 
+      @credentials_username = ""
+      @credentials_password = ""
+
     end
 
     def Write
@@ -72,9 +75,16 @@ module Yast
       # Provision
       Progress.NextStage
 
-      if !write_provision
-        Report.Error(_("Error provisioning database. Check logs for details."))
-        return false
+      case @operation
+      when "new_forest"
+        if !write_provision
+          Report.Error(_("Error provisioning database. Check logs for details."))
+          return false
+        end
+      when "new_dc"
+        if !write_join
+          Report.Error(_("Error joining to domain. Check logs for details."))
+        end
       end
 
       # Write krb
@@ -155,6 +165,22 @@ module Yast
 
     end
 
+    def write_join
+
+      domain = SambaConfig.GlobalGetStr("realm", "").downcase
+      role = @rodc ? "RODC" : "DC"
+      cmd = "samba-tool domain join #{domain} #{role} " +
+            "--dns-backend='#{@dns_backend}' " +
+            "--username=\"#{credentials_username}\" " +
+            "--password=\"#{credentials_password}\" "
+
+      output = SCR.Execute(path(".target.bash_output"), cmd)
+      Builtins.y2milestone("Samba domain join result: #{output}")
+
+      output["exit"] == 0
+
+    end
+
     def write_kerberos
 
       realm = SambaConfig.GlobalGetStr("realm", "")
@@ -207,6 +233,8 @@ module Yast
     publish variable: :operation, type: "string"
     publish variable: :parent_domain_name, type: "string"
     publish variable: :admin_password, type: "string"
+    publish variable: :credentials_username, type: "string"
+    publish variable: :credentials_password, type: "string"
     publish variable: :dns, type: "boolean"
     publish variable: :rodc, type: "boolean"
     publish variable: :rfc2307, type: "boolean"
