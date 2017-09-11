@@ -1,0 +1,65 @@
+#
+# spec file for package yast2-samba-provision
+#
+# Copyright (c) 2017 SUSE LINUX Products GmbH, Nuernberg, Germany.
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
+# Please submit bugfixes or comments via http://bugs.opensuse.org/
+#
+
+
+Name:           yast2-samba-provision
+Version:        1.0.0
+Release:        0
+
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+Source0:        %{name}-%{version}.tar.bz2
+
+Group:          System/YaST
+License:        GPL-2.0
+BuildRequires:  yast2 >= 3.3.8
+BuildRequires:	yast2-perl-bindings
+BuildRequires:  yast2-devtools >= 3.1.46
+BuildRequires:	yast2-testsuite
+BuildRequires:	perl-XML-Writer
+BuildRequires:	update-desktop-files
+
+Requires:       yast2 >= 3.3.8
+
+BuildArchitectures:	noarch
+
+Requires:       yast2-ruby-bindings >= 3.3.1
+requires:	yast2-network
+
+Summary:	YaST2 - Samba AD DC provision
+
+%description
+This package contains the YaST2 component to configure samba as an Active
+Directory (TM) Domain Controller.
+
+%prep
+%setup -n %{name}-%{version}
+
+%build
+%yast_build
+
+%install
+%yast_install
+
+%files
+%defattr(-,root,root)
+%dir %{yast_yncludedir}/samba-provision
+%{yast_yncludedir}/samba-provision/*
+%{yast_clientdir}/samba-provision.rb
+%{yast_moduledir}/SambaProvision.rb
+%{yast_desktopdir}/samba-provision.desktop
+%doc %{yast_docdir}
+
