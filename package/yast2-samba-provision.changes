@@ -2,6 +2,7 @@
 Wed Sep 13 10:00:05 UTC 2017 - scabrero@suse.com
 
 - Hide credentials widget when creating a new forest
+- Check for non existent included files and create them empty
 
 -------------------------------------------------------------------
 Mon Sep 11 06:46:09 UTC 2017 - scabrero@suse.com

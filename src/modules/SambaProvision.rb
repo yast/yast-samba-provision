@@ -137,6 +137,12 @@ module Yast
       SambaConfig.GlobalSetStr("map to guest", "Never")
       SambaConfig.GlobalSetStr("idmap backend", nil)
 
+      # Check for non-existent included files and create them empty
+      incfile = SambaConfig.GlobalGetStr("include", "")
+      if incfile.size > 0 and !FileUtils::Exists(incfile)
+        SCR.Write(path(".target.string"), incfile, "");
+      end
+
       true
 
     end
