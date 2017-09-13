@@ -67,12 +67,13 @@ module Yast
 
       if id == :op_new_dc
         SambaProvisionOperationOptionsNewDC()
-        SambaProvisionOperationOptionsCredentials()
+        SambaProvisionOperationOptionsCredentials(true)
       elsif id == :op_new_domain
         SambaProvisionOperationOptionsNewDomain()
-        SambaProvisionOperationOptionsCredentials()
+        SambaProvisionOperationOptionsCredentials(true)
       elsif id == :op_new_forest
         SambaProvisionOperationOptionsNewForest()
+        SambaProvisionOperationOptionsCredentials(false)
       end
 
       nil
@@ -197,19 +198,26 @@ module Yast
 
     end
 
-    def SambaProvisionOperationOptionsCredentials
+    def SambaProvisionOperationOptionsCredentials(visible)
 
-      UI.ReplaceWidget(
-        Id(:operation_credentials),
-        Frame(
-          _("Specify the credentials for this operation"),
-          VBox(
-            VSpacing(1),
-            Left(InputField(Id(:credentials_username), Opt(:hstretch), _("Username"))),
-            Left(Password(Id(:credentials_password), Opt(:hstretch), _("Password")))
+      if (visible)
+        UI.ReplaceWidget(
+          Id(:operation_credentials),
+          Frame(
+            _("Specify the credentials for this operation"),
+            VBox(
+              VSpacing(1),
+              Left(InputField(Id(:credentials_username), Opt(:hstretch), _("Username"))),
+              Left(Password(Id(:credentials_password), Opt(:hstretch), _("Password")))
+            )
           )
         )
-      )
+      else
+        UI.ReplaceWidget(
+          Id(:operation_credentials),
+          VBox(VStretch())
+        )
+      end
 
     end
 
