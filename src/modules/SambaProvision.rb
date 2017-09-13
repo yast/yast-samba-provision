@@ -67,7 +67,11 @@ module Yast
         return false
       end
 
-      if !SambaConfig.Write(true)
+      progress_orig = Progress.set(false)
+      ret = SambaConfig.Write(true)
+      Progress.set(progress_orig)
+
+      if !ret
         Report.Error(Message.CannotWriteSettingsTo("/etc/samba/smb.conf"))
         return false
       end
@@ -107,7 +111,7 @@ module Yast
       end
 
       # Final stage
-      Progress.NextStage
+      Progress.Finish
 
       true
 
@@ -206,7 +210,11 @@ module Yast
       Kerberos.Import(new_cfg)
       Kerberos.dns_used = true
       Kerberos.modified = true
+
+      # Do not show progress
+      progress_orig = Progress.set(false)
       Kerberos.Write()
+      Progress.set(progress_orig)
 
       true
 
@@ -231,6 +239,8 @@ module Yast
         path(".sysconfig.network.config.NETCONFIG_DNS_STATIC_SERVERS"),
         Builtins.mergestring(resolvlist, " ")
       )
+
+      SCR.Write(path(".sysconfig.network.config"), nil)
 
       true
 

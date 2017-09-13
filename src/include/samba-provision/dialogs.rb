@@ -190,7 +190,6 @@ module Yast
       Wizard.HideAbortButton
       Wizard.HideBackButton
       Wizard.HideNextButton
-      Wizard.RestoreHelp(Ops.get_string(@HELPS, "write", ""))
       ret = SambaProvision.Write
       ret ? :next : :abort
 
