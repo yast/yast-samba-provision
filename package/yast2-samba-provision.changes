@@ -5,6 +5,7 @@ Wed Sep 13 10:00:05 UTC 2017 - scabrero@suse.com
 - Check for non existent included files and create them empty
 - Fix network config not being updated after provision
 - Hide samba and kerberos progress on write
+- 1.0.0
 
 -------------------------------------------------------------------
 Mon Sep 11 06:46:09 UTC 2017 - scabrero@suse.com
