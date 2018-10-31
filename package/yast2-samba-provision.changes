@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Oct 31 17:17:35 UTC 2018 - Samuel Cabrero <scabrero@suse.de>
+
+- Fix required packages after samba-kdc renamed to samba-ad-dc
+- 1.0.1
+
+-------------------------------------------------------------------
 Wed Sep 13 10:00:05 UTC 2017 - scabrero@suse.com
 
 - Hide credentials widget when creating a new forest

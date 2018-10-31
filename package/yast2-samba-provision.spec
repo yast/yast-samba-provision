@@ -17,7 +17,7 @@
 
 
 Name:           yast2-samba-provision
-Version:        1.0.0
+Version:        1.0.1
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build

@@ -174,7 +174,7 @@ module Yast
 
       Wizard.RestoreHelp(Ops.get_string(@HELPS, "read", ""))
 
-      pkgs = [ "samba-kdc", "samba-dsdb-modules", "krb5-server" ]
+      pkgs = [ "samba-ad-dc", "samba-dsdb-modules", "krb5-server" ]
       if !PackageSystem.CheckAndInstallPackagesInteractive(pkgs)
         Builtins.y2warning("packages not installed")
         return :abort
