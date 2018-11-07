@@ -43,7 +43,7 @@ Summary:	YaST2 - Samba AD DC provision
 
 %description
 This package contains the YaST2 component to configure samba as an Active
-Directory (TM) Domain Controller.
+Directory Domain Controller.
 
 %prep
 %setup -n %{name}-%{version}
