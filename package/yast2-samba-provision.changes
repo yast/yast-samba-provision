@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Wed Nov  7 17:34:23 UTC 2018 - jengelh@inai.de
+
+- Remove TM mark.
+
+-------------------------------------------------------------------
 Wed Oct 31 17:17:35 UTC 2018 - Samuel Cabrero <scabrero@suse.de>
 
 - Fix required packages after samba-kdc renamed to samba-ad-dc
