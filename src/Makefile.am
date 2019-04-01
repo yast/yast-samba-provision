@@ -1,7 +1,8 @@
 # Sources for samba-client
 
 module_DATA = \
-  modules/SambaProvision.rb
+  modules/SambaProvision.rb \
+  modules/SambaToolDomainAPI.py
 
 client_DATA = \
   clients/samba-provision.rb
