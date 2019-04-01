@@ -37,6 +37,7 @@ Requires:       yast2 >= 3.3.8
 BuildArchitectures:	noarch
 
 Requires:       yast2-ruby-bindings >= 3.3.1
+Requires:       yast2-python3-bindings >= 4.0.8
 requires:	yast2-network
 
 Summary:	YaST2 - Samba AD DC provision
@@ -60,6 +61,7 @@ Directory Domain Controller.
 %{yast_yncludedir}/samba-provision/*
 %{yast_clientdir}/samba-provision.rb
 %{yast_moduledir}/SambaProvision.rb
+%{yast_moduledir}/SambaToolDomainAPI.py
 %{yast_desktopdir}/samba-provision.desktop
 %doc %{yast_docdir}
 
