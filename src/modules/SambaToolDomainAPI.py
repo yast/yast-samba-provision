@@ -1,3 +1,13 @@
+from io import TextIOBase
+from yast import ycpbuiltins
+import sys
+class YaSTIO(TextIOBase):
+    def __init__(self, outf):
+        self.outf = outf
+    def write(self, s):
+        self.outf(s)
+sys.stdout = YaSTIO(ycpbuiltins.y2debug)
+sys.stderr = YaSTIO(ycpbuiltins.y2error)
 from samba.netcmd import domain as dm
 from samba.getopt import SambaOptions, CredentialsOptions
 from optparse import OptionParser
