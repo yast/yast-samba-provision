@@ -3,6 +3,7 @@ Wed May 22 14:54:28 UTC 2019 - Samuel Cabrero <scabrero@suse.de>
 
 - Call samba python API using yast python binding; (bsc#1117597);
   (CVE-2018-17956)
+- Show a dialog with provision details or errors; (bsc#1132676);
 
 -------------------------------------------------------------------
 Wed Nov  7 17:34:23 UTC 2018 - jengelh@inai.de

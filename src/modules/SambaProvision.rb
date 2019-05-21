@@ -80,15 +80,25 @@ module Yast
       # Provision
       Progress.NextStage
 
+      result = false
+      output = ""
+
       case @operation
       when "new_forest"
-        if !write_provision
-          Report.Error(_("Error provisioning database. Check logs for details."))
+        result, output = write_provision
+        if !result
+          headline = _("An error occurred while provisioning new domain.")
+          msg = RichText(Opt(:plainText), output)
+          Popup.LongText(headline, msg, 60, 20)
           return false
         end
       when "new_dc"
-        if !write_join
-          Report.Error(_("Error joining to domain. Check logs for details."))
+        result, output = write_join
+        if !result
+          headline = _("An error occurred while joining to domain.")
+          msg = RichText(Opt(:plainText), output)
+          Popup.LongText(headline, msg, 60, 20)
+          return false
         end
       end
 
@@ -110,6 +120,10 @@ module Yast
         Progress.NextStage
         SCR.Execute(path(".target.bash"), "/sbin/netconfig update")
       end
+
+      headline = _("Provision result")
+      msg = RichText(Opt(:plainText), output)
+      Popup.LongText(headline, msg, 60, 20)
 
       # Final stage
       Progress.Finish
@@ -157,15 +171,14 @@ module Yast
       domain = SambaConfig.GlobalGetStr("workgroup", "")
       realm = SambaConfig.GlobalGetStr("realm", "")
 
-      output = SambaToolDomainAPI.provision(realm,
-                                            domain,
-                                            admin_password,
-                                            forest_level,
-                                            dns_backend,
-                                            rfc2307)
-      Builtins.y2milestone("Samba provision result: #{output}")
+      result, output = SambaToolDomainAPI.provision(realm,
+                                                    domain,
+                                                    admin_password,
+                                                    forest_level,
+                                                    dns_backend,
+                                                    rfc2307)
 
-      output == ""
+      return result, output
 
     end
 
@@ -173,14 +186,12 @@ module Yast
 
       domain = SambaConfig.GlobalGetStr("realm", "").downcase
       role = @rodc ? "RODC" : "DC"
-      output = SambaToolDomainAPI.join(domain,
-                                       role,
-                                       dns_backend,
-                                       credentials_username,
-                                       credentials_password)
-      Builtins.y2milestone("Samba domain join result: #{output}")
-
-      output == ""
+      result, output = SambaToolDomainAPI.join(domain,
+                                               role,
+                                               dns_backend,
+                                               credentials_username,
+                                               credentials_password)
+      return result, output
 
     end
 
