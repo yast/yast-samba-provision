@@ -1,15 +1,19 @@
-from io import TextIOBase
+from io import StringIO
 from yast import ycpbuiltins
 import sys
-class YaSTIO(TextIOBase):
+
+class YaSTIO(StringIO):
     def __init__(self, outf):
+        super(YaSTIO, self).__init__()
         self.outf = outf
+
     def write(self, s):
+        super(YaSTIO, self).write(s)
         self.outf(s)
-sys.stdout = YaSTIO(ycpbuiltins.y2debug)
-sys.stderr = YaSTIO(ycpbuiltins.y2error)
+
 from samba.netcmd import domain as dm
 from samba.getopt import SambaOptions, CredentialsOptions
+from samba.logger import get_samba_logger
 from optparse import OptionParser
 from samba.netcmd import CommandError
 from yast import Declare
@@ -29,8 +33,18 @@ def provision(realm, domain, adminpass, function_level, dns_backend, use_rfc2307
     sambaopts = SambaOptions(parser)
     lp = sambaopts.get_loadparm()
     lp.set('realm', realm)
-    provision = dm.cmd_domain_provision()
+
+    outlog = YaSTIO(ycpbuiltins.y2debug)
+    errlog = YaSTIO(ycpbuiltins.y2error)
+
+    provision = dm.cmd_domain_provision(errf=errlog)
     provision.raw_argv = []
+    provision.logger = get_samba_logger(name="provision",
+                                        stream=outlog,
+                                        verbose=True,
+                                        quiet=False,
+                                        fmt="%(message)s")
+
     try:
         provision.run(sambaopts=sambaopts,
                       domain=domain,
@@ -39,8 +53,8 @@ def provision(realm, domain, adminpass, function_level, dns_backend, use_rfc2307
                       dns_backend=dns_backend,
                       server_role="dc")
     except CommandError as e:
-        return e.message
-    return ''
+        return [False, e.message]
+    return [True, outlog.getvalue()]
 
 @Declare('string', 'string', 'string', 'string', 'string', 'string')
 def join(domain, role, dns_backend, username, password):
@@ -59,7 +73,17 @@ def join(domain, role, dns_backend, username, password):
     credopts.creds.set_password(password)
     credopts.ask_for_password = False
     credopts.machine_pass = False
-    join = dm.cmd_domain_join()
+
+    outlog = YaSTIO(ycpbuiltins.y2debug)
+    errlog = YaSTIO(ycpbuiltins.y2error)
+
+    join = dm.cmd_domain_join(errf=errlog)
+    join.logger = get_samba_logger(name="provision",
+                                   stream=outlog,
+                                   verbose=True,
+                                   quiet=False,
+                                   fmt="%(message)s")
+
     try:
         join.run(sambaopts=sambaopts,
                  credopts=credopts,
@@ -67,5 +91,5 @@ def join(domain, role, dns_backend, username, password):
                  role=role,
                  dns_backend=dns_backend)
     except CommandError as e:
-        return e.message
-    return ''
+        return [False, e.message]
+    return [True, outlog.getvalue()]
