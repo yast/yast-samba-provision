@@ -15,6 +15,7 @@ module Yast
       Yast.import "Kerberos"
       Yast.import "DNS"
       Yast.import "SambaToolDomainAPI"
+      Yast.import "Service"
 
       @operation = ""
       @parent_domain_name = ""
@@ -37,16 +38,18 @@ module Yast
 
       caption = _("Provisioning Samba Active Directory Domain controller...")
 
-      no_stages = 3
+      no_stages = 4
       stages = [
         _("Write the settings"),
         _("Provision"),
-        _("Write kerberos settings")
+        _("Write kerberos settings"),
+        _("Start services")
       ]
       steps = [
         _("Writting the settings..."),
         _("Provisioning..."),
-        _("Writting kerberos settings...")
+        _("Writting kerberos settings..."),
+        _("Starting services...")
       ]
 
       if @dns
@@ -124,6 +127,18 @@ module Yast
       headline = _("Provision result")
       msg = RichText(Opt(:plainText), output)
       Popup.LongText(headline, msg, 60, 20)
+
+      Progress.NextStage
+
+      if !Service.Adjust("samba-ad-dc", "enable")
+        # translators: error message, do not change winbind
+        Report.Error(_("Cannot enable samba-ad-dc service."))
+        return false
+      end
+      if !Service.Start("samba-ad-dc")
+        Report.Error(_("Cannot start samba-ad-dc daemon."))
+        return false
+      end
 
       # Final stage
       Progress.Finish
