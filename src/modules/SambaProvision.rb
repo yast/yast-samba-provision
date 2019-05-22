@@ -14,6 +14,7 @@ module Yast
       Yast.import "SambaConfig"
       Yast.import "Kerberos"
       Yast.import "DNS"
+      Yast.import "SambaToolDomainAPI"
 
       @operation = ""
       @parent_domain_name = ""
@@ -156,22 +157,15 @@ module Yast
       domain = SambaConfig.GlobalGetStr("workgroup", "")
       realm = SambaConfig.GlobalGetStr("realm", "")
 
-      cmd = "samba-tool domain provision " +
-            "--server-role=dc " +
-            "--realm='#{realm}' " +
-            "--domain='#{domain}' " +
-            "--adminpass='#{@admin_password}' " +
-            "--function-level='#{@forest_level}' " +
-            "--dns-backend='#{@dns_backend}' "
-
-      if @rfc2307
-        cmd += " --use-rfc2307"
-      end
-
-      output = SCR.Execute(path(".target.bash_output"), cmd)
+      output = SambaToolDomainAPI.provision(realm,
+                                            domain,
+                                            admin_password,
+                                            forest_level,
+                                            dns_backend,
+                                            rfc2307)
       Builtins.y2milestone("Samba provision result: #{output}")
 
-      output["exit"] == 0
+      output == ""
 
     end
 
@@ -179,15 +173,14 @@ module Yast
 
       domain = SambaConfig.GlobalGetStr("realm", "").downcase
       role = @rodc ? "RODC" : "DC"
-      cmd = "samba-tool domain join #{domain} #{role} " +
-            "--dns-backend='#{@dns_backend}' " +
-            "--username=\"#{credentials_username}\" " +
-            "--password=\"#{credentials_password}\" "
-
-      output = SCR.Execute(path(".target.bash_output"), cmd)
+      output = SambaToolDomainAPI.join(domain,
+                                       role,
+                                       dns_backend,
+                                       credentials_username,
+                                       credentials_password)
       Builtins.y2milestone("Samba domain join result: #{output}")
 
-      output["exit"] == 0
+      output == ""
 
     end
 
