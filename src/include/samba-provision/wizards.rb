@@ -80,7 +80,7 @@ module Yast
       }
 
       Wizard.CreateDialog
-      Wizard.SetDesktopTitleAndIcon("samba-provision")
+      Wizard.SetDesktopTitleAndIcon("org.openSUSE.YaST.SambaProvision")
 
       ret = Sequencer.Run(aliases, sequence)
 
