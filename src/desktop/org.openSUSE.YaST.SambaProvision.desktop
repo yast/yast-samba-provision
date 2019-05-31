@@ -21,6 +21,7 @@ X-SuSE-YaST-Keywords=authentication,samba,windows
 Icon=yast-samba-server
 Exec=xdg-su -c "/sbin/yast2 samba-provision"
 
-Name=Provision an Active Directory Domain Controller
-GenericName=Configure an Active Directory Domain Controller
+Name=YaST Active Directory Domain Controller
+GenericName=Active Directory Domain Controller
+Comment=Provision an Active Directory Domain Controller
 StartupNotify=true
