@@ -80,7 +80,7 @@ module Yast
       }
 
       Wizard.CreateDialog
-      Wizard.SetDesktopTitleAndIcon("org.openSUSE.YaST.SambaProvision")
+      Wizard.SetDesktopTitleAndIcon("org.opensuse.yast.SambaProvision")
 
       ret = Sequencer.Run(aliases, sequence)
 
