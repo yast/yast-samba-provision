@@ -24,7 +24,7 @@ schemafilesdir = $(schemadir)/autoyast/rnc
 schemafiles_DATA =
 
 desktop_DATA = \
-  desktop/samba-provision.desktop
+  desktop/org.opensuse.yast.SambaProvision.desktop
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(agent_SCRIPTS) $(schemafiles_DATA) $(desktop_DATA)
 
