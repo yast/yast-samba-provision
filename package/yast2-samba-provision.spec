@@ -12,56 +12,54 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
+# Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
 
 Name:           yast2-samba-provision
 Version:        1.0.2
 Release:        0
-
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-Source0:        %{name}-%{version}.tar.bz2
-
+Summary:        YaST2 - Samba AD DC provision
 Group:          System/YaST
 License:        GPL-2.0
+Url:            https://github.com/yast/yast-samba-provision
+
+Source0:        %{name}-%{version}.tar.bz2
+
 BuildRequires:  yast2 >= 3.3.8
-BuildRequires:	yast2-perl-bindings
-BuildRequires:  yast2-devtools >= 3.1.46
-BuildRequires:	yast2-testsuite
-BuildRequires:	perl-XML-Writer
-BuildRequires:	update-desktop-files
+BuildRequires:  yast2-perl-bindings
+BuildRequires:  yast2-devtools >= 4.2.2
+BuildRequires:  yast2-testsuite
+BuildRequires:  perl-XML-Writer
+BuildRequires:  update-desktop-files
 
 Requires:       yast2 >= 3.3.8
-
-BuildArchitectures:	noarch
-
 Requires:       yast2-ruby-bindings >= 3.3.1
 Requires:       yast2-python3-bindings >= 4.0.8
-requires:	yast2-network
+Requires:       yast2-network
 
-Summary:	YaST2 - Samba AD DC provision
+BuildArch:      noarch
 
 %description
 This package contains the YaST2 component to configure samba as an Active
 Directory Domain Controller.
 
 %prep
-%setup -n %{name}-%{version}
+%setup -q
 
 %build
 %yast_build
 
 %install
 %yast_install
+%yast_metainfo
 
 %files
-%defattr(-,root,root)
-%dir %{yast_yncludedir}/samba-provision
-%{yast_yncludedir}/samba-provision/*
-%{yast_clientdir}/samba-provision.rb
-%{yast_moduledir}/SambaProvision.rb
-%{yast_moduledir}/SambaToolDomainAPI.py
-%{yast_desktopdir}/samba-provision.desktop
+%{yast_yncludedir}
+%{yast_clientdir}
+%{yast_moduledir}
+%{yast_desktopdir}
+%{yast_metainfodir}
 %doc %{yast_docdir}
 
+%changelog
