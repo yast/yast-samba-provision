@@ -17,7 +17,7 @@
 
 
 Name:           yast2-samba-provision
-Version:        1.0.3
+Version:        1.0.4
 Release:        0
 Summary:        YaST2 - Samba AD DC provision
 Group:          System/YaST
