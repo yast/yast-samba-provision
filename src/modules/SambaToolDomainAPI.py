@@ -52,8 +52,10 @@ def provision(realm, domain, adminpass, function_level, dns_backend, use_rfc2307
                       function_level=function_level,
                       dns_backend=dns_backend,
                       server_role="dc")
-    except CommandError as e:
-        return [False, e.message]
+    except Exception as e:
+        template = "{0} exception:\n{1}"
+        message = template.format(type(e).__name__, str(e))
+        return [False, message]
     return [True, outlog.getvalue()]
 
 @Declare('string', 'string', 'string', 'string', 'string', 'string')
@@ -90,6 +92,8 @@ def join(domain, role, dns_backend, username, password):
                  domain=domain,
                  role=role,
                  dns_backend=dns_backend)
-    except CommandError as e:
-        return [False, e.message]
+    except Exception as e:
+        template = "{0} exception:\n{1}"
+        message = template.format(type(e).__name__, str(e))
+        return [False, message]
     return [True, outlog.getvalue()]
