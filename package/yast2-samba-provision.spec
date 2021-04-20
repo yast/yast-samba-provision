@@ -1,7 +1,7 @@
 #
 # spec file for package yast2-samba-provision
 #
-# Copyright (c) 2017 SUSE LINUX Products GmbH, Nuernberg, Germany.
+# Copyright (c) 2021 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -17,27 +17,23 @@
 
 
 Name:           yast2-samba-provision
-Version:        1.0.4
+Version:        1.0.5
 Release:        0
 Summary:        YaST2 - Samba AD DC provision
+License:        GPL-2.0-only
 Group:          System/YaST
-License:        GPL-2.0
-Url:            https://github.com/yast/yast-samba-provision
-
+URL:            https://github.com/yast/yast-samba-provision
 Source0:        %{name}-%{version}.tar.bz2
-
-BuildRequires:  yast2 >= 3.3.8
-BuildRequires:  yast2-perl-bindings
-BuildRequires:  yast2-devtools >= 4.2.2
-BuildRequires:  yast2-testsuite
 BuildRequires:  perl-XML-Writer
 BuildRequires:  update-desktop-files
-
+BuildRequires:  yast2 >= 3.3.8
+BuildRequires:  yast2-devtools >= 4.4.0
+BuildRequires:  yast2-perl-bindings
+BuildRequires:  yast2-testsuite
 Requires:       yast2 >= 3.3.8
-Requires:       yast2-ruby-bindings >= 3.3.1
-Requires:       yast2-python3-bindings >= 4.0.8
 Requires:       yast2-network
-
+Requires:       yast2-python3-bindings >= 4.0.8
+Requires:       yast2-ruby-bindings >= 3.3.1
 BuildArch:      noarch
 
 %description
@@ -55,11 +51,11 @@ Directory Domain Controller.
 %yast_metainfo
 
 %files
+%license COPYING
 %{yast_yncludedir}
 %{yast_clientdir}
 %{yast_moduledir}
 %{yast_desktopdir}
 %{yast_metainfodir}
-%doc %{yast_docdir}
 
 %changelog
