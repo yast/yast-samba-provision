@@ -17,7 +17,7 @@
 
 
 Name:           yast2-samba-provision
-Version:        1.0.3
+Version:        1.0.4
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -63,5 +63,9 @@ Directory Domain Controller.
 %{yast_moduledir}/SambaProvision.rb
 %{yast_moduledir}/SambaToolDomainAPI.py
 %{yast_desktopdir}/samba-provision.desktop
+%if 0%{?sle_version} <= 150300 
 %doc %{yast_docdir}
+%else
+%license COPYING
+%endif
 
