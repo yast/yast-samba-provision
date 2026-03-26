@@ -17,7 +17,7 @@
 
 
 Name:           yast2-samba-provision
-Version:        1.0.5
+Version:        1.0.6
 Release:        0
 Summary:        YaST2 - Samba AD DC provision
 License:        GPL-2.0-only
@@ -25,7 +25,6 @@ Group:          System/YaST
 URL:            https://github.com/yast/yast-samba-provision
 Source0:        %{name}-%{version}.tar.bz2
 BuildRequires:  perl-XML-Writer
-BuildRequires:  update-desktop-files
 BuildRequires:  yast2 >= 3.3.8
 BuildRequires:  yast2-devtools >= 4.4.0
 BuildRequires:  yast2-perl-bindings
